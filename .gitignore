@@ -1,0 +1,11 @@
+# VSCode
+.vscode
+
+# Folders
+weights
+obj
+
+# Other files
+darknet
+*.o
+predictions.png
