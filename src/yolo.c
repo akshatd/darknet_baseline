@@ -388,7 +388,8 @@ void test_yolo(char *cfgfile, char *weightfile, char *filename, float thresh)
 		}
 
 		struct timeval start, end;
-		gettimeofday(&tstart, NULL);		
+		gettimeofday(&tstart, NULL);	
+			
 		int i;
 		for(i = 0; i < num_files; ++i){
 			input = input_list[i];
@@ -417,22 +418,21 @@ void test_yolo(char *cfgfile, char *weightfile, char *filename, float thresh)
 
 			// forward_network(net, state);
 			/*++++++++++++++++++++++++++++*/
-			// because passed by value, the variables are intended to be left untouched
-			network net_f = net;
-			network_state state_f = state;
 			//
-			state_f.workspace = net_f.workspace;
+			state.workspace = net.workspace;
 			int l_idx;
 			float * output;
 
 			// looped version
-			for(l_idx = 0; l_idx < net_f.n; ++l_idx){
+			for(l_idx = 0; l_idx < net.n; ++l_idx){
 				// create layer i
 				// do a forward layer with the input
-				state.index = l_idx;
+				// !!!!SHORTCUT AND ROUTE LAYERS WONT WORK!!!!
+				// !!!!THEY NEED THE ENTIRE NETWORK, NOT JUST A LAYER!!!
 				layer l = net.layers[l_idx];
-				output = forward_layer(l, state_f);
-				state_f.input = output;
+				state.index = l_idx;
+				output = forward_layer(l, state);
+				state.input = output;
 				// delete layer i
 			}
 			/*----------------------------*/
