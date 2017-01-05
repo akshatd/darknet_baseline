@@ -29,7 +29,7 @@
 
 // For getting files in a dir
 #include <dirent.h> 
-#define MAX_FILES 1
+#define MAX_FILES 10
 #define MAX_FILENAME 256
 
 // For forward network to work
@@ -44,7 +44,7 @@
 #endif
 
 // prototypes for new functions
-float *forward_layer(int, network, network_state);
+float *forward_layer(layer, network_state);
 void parse_filenames(char*, char [MAX_FILES][MAX_FILENAME], int*);
 float elapsed_sec(struct timeval, struct timeval);
 
@@ -422,14 +422,16 @@ void test_yolo(char *cfgfile, char *weightfile, char *filename, float thresh)
 			network_state state_f = state;
 			//
 			state_f.workspace = net_f.workspace;
-			int i;
+			int l_idx;
 			float * output;
 
 			// looped version
-			for(i = 0; i < net_f.n; ++i){
+			for(l_idx = 0; l_idx < net_f.n; ++l_idx){
 				// create layer i
 				// do a forward layer with the input
-				output = forward_layer(i, net_f, state_f);
+				state.index = l_idx;
+				layer l = net.layers[l_idx];
+				output = forward_layer(l, state_f);
 				state_f.input = output;
 				// delete layer i
 			}
@@ -527,9 +529,8 @@ float elapsed_sec(struct timeval start, struct timeval end){
 			(float)(end.tv_usec - start.tv_usec)/1000.0)/1000.0;
 }
 
-float *forward_layer(int i, network net, network_state state){
-	state.index = i;
-	layer l = net.layers[i];
+float *forward_layer(layer l, network_state state){
+	network net  = state.net;
 
 	if(l.delta){
 #ifdef TIME_PROFILING_H

@@ -14,7 +14,7 @@ OBJDIR=./obj/
 ifeq ($(CROSS_PLAT), 1)
 CC=$(CROSS_COMPILE)gcc
 else
-CC=gcc -g
+CC=gcc
 endif
 
 NVCC=nvcc
