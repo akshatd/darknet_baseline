@@ -452,6 +452,7 @@ void set_batch_network(network *net, int b)
 int resize_network(network *net, int w, int h)
 {
     int i;
+    // Uncomment for MNIST
     //if(w == net->w && h == net->h) return 0;
     net->w = w;
     net->h = h;
